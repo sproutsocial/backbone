@@ -50,6 +50,8 @@
     $ = lib;
   };
 
+  Backbone.$ = root.jQuery || root.Zepto || root.ender || root.$;
+
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
   Backbone.noConflict = function() {
@@ -191,7 +193,9 @@
     attributes || (attributes = {});
     if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = getValue(this, 'defaults')) {
-      attributes = _.extend({}, defaults, attributes);
+      //SproutSocial
+      attributes = $.extend(true,{}, defaults, attributes);
+      //attributes = _.extend({}, defaults, attributes);
     }
     if (options && options.collection) this.collection = options.collection;
     this.attributes = {};
@@ -260,7 +264,7 @@
     set: function(key, value, options) {
       var attrs, attr, val;
 
-      // Handle both
+      // Handle both `"key", value` and `{key: value}` -style arguments.
       if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
@@ -1356,7 +1360,11 @@
     }
 
     // Make the request, allowing the user to override any Ajax options.
-    return $.ajax(_.extend(params, options));
+    return Backbone.ajax(_.extend(params, options));
+  };
+  
+  Backbone.ajax = function() {
+    return Backbone.$.ajax.apply(Backbone.$, arguments);
   };
 
   // Wrap an optional error callback with a fallback error event.
